@@ -24,6 +24,8 @@ protected:
 	class USpringArmComponent* SpringArmComp;
 	UPROPERTY(EditAnywhere, Category = "Camera",  meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* CameraComp;
+	UPROPERTY(VisibleAnywhere)
+	class USInteractionComponent* InteractionComp;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -32,6 +34,7 @@ protected:
 	void MoveRight(float Value);
 
 	void PrimaryAttack();
+	void PrimaryInteract();
 
 public:	
 	// Called every frame
@@ -39,5 +42,4 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 };
