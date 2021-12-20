@@ -3,6 +3,7 @@
 
 #include "SInteractionComponent.h"
 
+#include "DrawDebugHelpers.h"
 #include "SGameplayInterface.h"
 
 // Sets default values for this component's properties
