@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -51,7 +52,10 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("Ability1", IE_Pressed, this, &ASCharacter::Ability1);
+	
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -84,6 +88,43 @@ void ASCharacter::PrimaryAttack()
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
+	// Line Trace
+	FHitResult Hit;
+	FVector Start = CameraComp->GetComponentLocation();
+	FVector End = CameraComp->GetForwardVector() * 1000 + Start;
+	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility);
+
+	// Spawn data
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FTransform SpawnTM = FTransform(GetControlRotation(),HandLocation);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Instigator = this;
+	
+	AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+
+	// Set correct rotation
+	if(IsValid(Hit.GetActor()))
+	{
+		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(Projectile->GetActorLocation(), Hit.GetActor()->GetActorLocation());
+		Projectile->SetActorRotation(Rotation);
+	}
+	else
+	{
+		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(Projectile->GetActorLocation(), End);
+		Projectile->SetActorRotation(Rotation);
+	}
+}
+
+void ASCharacter::Ability1()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_Ability1, this, &ASCharacter::Ability1_TimerElapse, 0.2f);
+}
+
+void ASCharacter::Ability1_TimerElapse()
+{
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 	FTransform SpawnTM = FTransform(GetControlRotation(),HandLocation);
 	
@@ -91,10 +132,13 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Instigator = this;
 	
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	GetWorld()->SpawnActor<AActor>(Ability1Class, SpawnTM, SpawnParams);
 }
 
 void ASCharacter::PrimaryInteract()
 {
 	InteractionComp->PrimaryInteract();
 }
+
+
+

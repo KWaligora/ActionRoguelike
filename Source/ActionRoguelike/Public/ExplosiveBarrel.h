@@ -22,7 +22,10 @@ public:
 	// Sets default values for this actor's properties
 	AExplosiveBarrel();
 
-protected:	
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStaticMeshComponent* BaseMesh;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

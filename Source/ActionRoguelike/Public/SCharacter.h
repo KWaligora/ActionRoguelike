@@ -16,9 +16,16 @@ protected:
 	TSubclassOf<AActor> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> Ability1Class;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UAnimMontage* Ability1Anim;
+
 	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_Ability1;
 	
 public:
 	// Sets default values for this character's properties
@@ -40,6 +47,9 @@ protected:
 
 	void PrimaryAttack();
 	void PrimaryAttack_TimeElapsed();
+
+	void Ability1();
+	void Ability1_TimerElapse();
 	
 	void PrimaryInteract();
 
@@ -47,6 +57,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 };

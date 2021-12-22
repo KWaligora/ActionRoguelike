@@ -16,6 +16,10 @@ AExplosiveBarrel::AExplosiveBarrel()
 	
 	RadialForceComp = CreateDefaultSubobject<URadialForceComponent>("RadiaForceComp");
 	RadialForceComp->SetupAttachment(StaticMeshComp);
+	RadialForceComp->bImpulseVelChange = true;
+	RadialForceComp->ImpulseStrength = 2500.0f;
+	RadialForceComp->Radius = 750.0f;
+	RadialForceComp->AddCollisionChannelToAffect(ECC_WorldDynamic);
 }
 
 // Called when the game starts or when spawned
