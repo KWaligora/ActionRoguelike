@@ -1,5 +1,6 @@
 #include "SCharacter.h"
 
+#include "DrawDebugHelpers.h"
 #include "SInteractionComponent.h"
 #include "SMagicProjectile.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -91,29 +92,27 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 	// Line Trace
 	FHitResult Hit;
 	FVector Start = CameraComp->GetComponentLocation();
-	FVector End = CameraComp->GetForwardVector() * 1000 + Start;
+	FVector End = CameraComp->GetForwardVector() * 10000 + Start;
 	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility);
 
 	// Spawn data
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FTransform SpawnTM = FTransform(GetControlRotation(),HandLocation);
+	FRotator Rotation;
+	if(IsValid(Hit.GetActor()))
+	{
+		DrawDebugLine(GetWorld(), Start, End, FColor::Red, true);
+		Rotation = UKismetMathLibrary::FindLookAtRotation(HandLocation, Hit.ImpactPoint);
+	}
+	else
+	{
+		Rotation = UKismetMathLibrary::FindLookAtRotation(HandLocation, End);
+	}
+	FTransform SpawnTM = FTransform(Rotation,HandLocation);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Instigator = this;
 	
 	AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
-
-	// Set correct rotation
-	if(IsValid(Hit.GetActor()))
-	{
-		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(Projectile->GetActorLocation(), Hit.GetActor()->GetActorLocation());
-		Projectile->SetActorRotation(Rotation);
-	}
-	else
-	{
-		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(Projectile->GetActorLocation(), End);
-		Projectile->SetActorRotation(Rotation);
-	}
 }
 
 void ASCharacter::Ability1()
