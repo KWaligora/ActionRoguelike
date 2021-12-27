@@ -11,7 +11,8 @@ class ACTIONROGUELIKE_API ASMagicProjectile : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	
 	// Sets default values for this actor's properties
 	ASMagicProjectile();
 
@@ -27,6 +28,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UParticleSystemComponent* EffectComp;
+
+	UFUNCTION()
+	void OnActorOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* OtherActor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult);
 
 public:	
 	// Called every frame

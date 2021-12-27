@@ -34,10 +34,15 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Camera",  meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* SpringArmComp;
+	
 	UPROPERTY(EditAnywhere, Category = "Camera",  meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* CameraComp;
+	
 	UPROPERTY(VisibleAnywhere)
 	class USInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly);
+	class USAttributeComponent* AttributeComp;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

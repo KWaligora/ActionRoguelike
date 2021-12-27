@@ -1,6 +1,7 @@
 #include "SCharacter.h"
 
 #include "DrawDebugHelpers.h"
+#include "SAttributeComponent.h"
 #include "SInteractionComponent.h"
 #include "SMagicProjectile.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -25,6 +26,8 @@ ASCharacter::ASCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
+
+	AttributeComp = CreateDefaultSubobject<USAttributeComponent>(TEXT("Attribute Component"));
 }
 
 // Called when the game starts or when spawned
@@ -99,8 +102,7 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 	FRotator Rotation;
 	if(IsValid(Hit.GetActor()))
-	{
-		DrawDebugLine(GetWorld(), Start, End, FColor::Red, true);
+	{		
 		Rotation = UKismetMathLibrary::FindLookAtRotation(HandLocation, Hit.ImpactPoint);
 	}
 	else
