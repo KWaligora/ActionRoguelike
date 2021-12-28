@@ -43,7 +43,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly);
 	class USAttributeComponent* AttributeComp;
-	
+
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -58,6 +60,8 @@ protected:
 	
 	void PrimaryInteract();
 
+	virtual void PostInitializeComponents() override;
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
